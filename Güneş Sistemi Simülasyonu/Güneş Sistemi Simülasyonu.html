@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Güneş Sistemi</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .solar-system {
+            position: relative;
+            width: 600px;
+            height: 600px;
+        }
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+        }
+        .moon {
+            position: absolute;
+            border-radius: 50%;
+            background-color: lightgray;
+        }
+        .orbit {
+            position: absolute;
+            border: 1px dashed white;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="solar-system">
+        <div class="sun"></div>
+        <div class="orbit" id="orbit-mercury"></div>
+        <div class="orbit" id="orbit-venus"></div>
+        <div class="orbit" id="orbit-earth"></div>
+        <div class="orbit" id="orbit-mars"></div>
+        <div class="planet" id="mercury"></div>
+        <div class="planet" id="venus"></div>
+        <div class="planet" id="earth"></div>
+        <div class="planet" id="mars"></div>
+        <div class="moon" id="moon"></div>
+    </div>
+
+    <script>
+        const planets = [
+            { id: 'mercury', distance: 80, size: 10, speed: 0.07, color: 'gray' },
+            { id: 'venus', distance: 120, size: 15, speed: 0.05, color: 'orange' },
+            { id: 'earth', distance: 160, size: 20, speed: 0.03, color: 'blue' },
+            { id: 'mars', distance: 200, size: 18, speed: 0.02, color: 'red' }
+        ];
+
+        planets.forEach(planet => {
+            const element = document.getElementById(planet.id);
+            element.style.width = planet.size + 'px';
+            element.style.height = planet.size + 'px';
+            element.style.backgroundColor = planet.color;
+            element.style.position = 'absolute';
+            element.style.top = '50%';
+            element.style.left = '50%';
+            element.style.transform = `translate(-50%, -50%) translateX(${planet.distance}px)`;
+
+            // Yörünge çizgisi
+            const orbit = document.getElementById(`orbit-${planet.id}`);
+            orbit.style.width = (planet.distance * 2) + 'px';
+            orbit.style.height = (planet.distance * 2) + 'px';
+            orbit.style.top = '50%';
+            orbit.style.left = '50%';
+            orbit.style.transform = 'translate(-50%, -50%)';
+        });
+
+        const moon = document.getElementById('moon');
+        const earth = planets.find(p => p.id === 'earth');
+        moon.style.width = '8px';
+        moon.style.height = '8px';
+        moon.style.backgroundColor = 'lightgray';
+        moon.style.position = 'absolute';
+        moon.style.top = '50%';
+        moon.style.left = '50%';
+
+        let angle = 0;
+
+        function animate() {
+            angle += 0.02; // Hız artırıldı
+            planets.forEach(planet => {
+                const element = document.getElementById(planet.id);
+                const x = planet.distance * Math.cos(angle * planet.speed);
+                const y = planet.distance * Math.sin(angle * planet.speed);
+                element.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+            });
+
+            // Ay'ın hareketi
+            const moonDistance = 30; // Ay'ın Dünya'ya olan mesafesi
+            const moonAngle = angle * 2; // Ay'ın Dünya etrafında dönme hızı
+            const moonX = earth.distance * Math.cos(angle * earth.speed) + moonDistance * Math.cos(moonAngle);
+            const moonY = earth.distance * Math.sin(angle * earth.speed) + moonDistance * Math.sin(moonAngle);
+            moon.style.transform = `translate(-50%, -50%) translate(${moonX}px, ${moonY}px)`;
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
